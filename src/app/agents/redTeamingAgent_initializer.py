@@ -8,12 +8,8 @@ import asyncio
 from dotenv import load_dotenv
 load_dotenv()
 
-# Azure AI Project Information (dict form so scan results are published to Foundry)
-azure_ai_project = {
-    "subscription_id": os.getenv("AZURE_SUBSCRIPTION_ID", "abf1dfad-18ff-4e4e-a394-da4334202532"),
-    "resource_group_name": os.getenv("AZURE_RESOURCE_GROUP", "rg-techworkshop-l300-ai-agents"),
-    "project_name": os.getenv("FOUNDRY_PROJECT_NAME", "proj-kcvzmsw6lrrw4"),
-}
+# Azure AI Project Information (Foundry project endpoint)
+azure_ai_project = os.getenv("FOUNDRY_ENDPOINT")
 
 # Instantiate your AI Red Teaming Agent
 red_team_agent = RedTeam(
@@ -41,6 +37,9 @@ chat_target = OpenAIChatTarget(
 )
 
 async def main():
-    red_team_result = await red_team_agent.scan(target=chat_target)
+    red_team_result = await red_team_agent.scan(
+        target=chat_target,
+        scan_name="techworkshop-redteam-scan",
+    )
 
 asyncio.run(main())
