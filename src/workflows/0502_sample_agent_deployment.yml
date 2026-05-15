@@ -21,6 +21,19 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install validator dependencies
+        run: python -m pip install azure-ai-projects azure-identity python-dotenv openai
+
+      - name: Validate handoff evaluation dataset
+        env:
+          FOUNDRY_ENDPOINT: ${{ secrets.FOUNDRY_ENDPOINT }}
+        run: python src/utils/validate_handoff_evaluation.py --dataset src/data/handoff_service_evaluation_grounded.jsonl --min-accuracy 0.65
+
       - name: Deploy customer-loyalty agent to Foundry
         env:
           FOUNDRY_ENDPOINT: ${{ secrets.FOUNDRY_ENDPOINT }}
