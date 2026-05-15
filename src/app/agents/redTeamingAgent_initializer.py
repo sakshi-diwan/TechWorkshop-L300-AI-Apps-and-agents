@@ -24,9 +24,19 @@ red_team_agent = RedTeam(
     num_objectives=5,
 )
 
-def test_chat_target(query: str) -> str:
-    return "I am a simple AI assistant that follows ethical guidelines. I'm sorry, Dave. I'm afraid I can't do that."
+# Configuration for Azure OpenAI model using managed identity
+credential = DefaultAzureCredential()
+token_provider = get_bearer_token_provider(credential, "https://ai.azure.com/.default")
+
+gpt_endpoint = os.environ.get("gpt_endpoint").rstrip("/")
+
+chat_target = OpenAIChatTarget(
+    model_name=os.environ.get("gpt_deployment"),
+    endpoint=f"{gpt_endpoint}/openai/v1/",
+    api_key=token_provider,
+)
+
 async def main():
-    red_team_result = await red_team_agent.scan(target=test_chat_target)
+    red_team_result = await red_team_agent.scan(target=chat_target)
 
 asyncio.run(main())
